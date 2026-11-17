@@ -6,8 +6,10 @@ export type BadgeVariant =
   | "success"
   | "warning"
   | "error"
+  | "danger"
   | "neutral"
-  | "primary";
+  | "primary"
+  | "accent";
 
 interface BadgeProps {
   label: string;
@@ -22,7 +24,8 @@ export default function Badge({
   style,
   dot = false,
 }: BadgeProps) {
-  const variantStyles = styles[variant];
+  const resolvedVariant = variant === "danger" ? "error" : variant;
+  const variantStyles = styles[resolvedVariant] || styles.neutral;
 
   return (
     <View style={[styles.badge, variantStyles.container, style]}>
@@ -36,9 +39,9 @@ const styles = {
   badge: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: 9,
+    paddingVertical: 3.5,
+    borderRadius: 9999, // Smooth rounded pill
     gap: 5,
   },
   dot: {
@@ -47,73 +50,86 @@ const styles = {
     borderRadius: 3,
   },
   text: {
-    fontSize: 11,
-    fontWeight: "700" as const,
-    letterSpacing: 0.2,
+    fontSize: 11.5,
+    fontWeight: "600" as const,
+    letterSpacing: 0.1,
   },
   success: StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.successBg,
+      backgroundColor: "#EAF4E7",
       borderWidth: 1,
-      borderColor: theme.colors.successBorder,
+      borderColor: theme.colors.successBorder, // #B7D9A8
     },
     dot: {
-      backgroundColor: theme.colors.success,
+      backgroundColor: "#2E7D32",
     },
     text: {
-      color: theme.colors.successText,
+      color: "#1E5819",
     },
   }),
   warning: StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.warningBg,
+      backgroundColor: "#FFF3E8",
       borderWidth: 1,
-      borderColor: theme.colors.warningBorder,
+      borderColor: "#FCD5B5",
     },
     dot: {
-      backgroundColor: theme.colors.warning,
+      backgroundColor: theme.colors.accent, // #F28C45
     },
     text: {
-      color: theme.colors.warningText,
+      color: "#C45E1E",
     },
   }),
   error: StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.errorBg,
+      backgroundColor: "#FEF2F2",
       borderWidth: 1,
-      borderColor: theme.colors.errorBorder,
+      borderColor: "#FCA5A5",
     },
     dot: {
-      backgroundColor: theme.colors.error,
+      backgroundColor: "#DC2626",
     },
     text: {
-      color: theme.colors.errorText,
+      color: "#991B1B",
     },
   }),
   neutral: StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.backgroundAlt,
+      backgroundColor: "#F5F1E8",
       borderWidth: 1,
-      borderColor: theme.colors.cardBorder,
+      borderColor: theme.colors.cardBorder, // #E9E6DC
     },
     dot: {
-      backgroundColor: theme.colors.textMuted,
+      backgroundColor: "#777777",
     },
     text: {
-      color: theme.colors.textSecondary,
+      color: "#555555",
     },
   }),
   primary: StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.primaryLight,
+      backgroundColor: theme.colors.primary, // #171717
       borderWidth: 1,
-      borderColor: theme.colors.primaryBorder,
+      borderColor: "#2E2E2E",
     },
     dot: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.accent,
     },
     text: {
-      color: theme.colors.primary,
+      color: "#FFFFFF",
+    },
+  }),
+  accent: StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.accentLight,
+      borderWidth: 1,
+      borderColor: theme.colors.accentBorder,
+    },
+    dot: {
+      backgroundColor: theme.colors.accent,
+    },
+    text: {
+      color: theme.colors.accentText,
     },
   }),
 };

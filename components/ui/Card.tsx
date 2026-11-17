@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, View, ViewProps } from "react-native";
+import { Platform, StyleSheet, View, ViewProps } from "react-native";
 import { theme } from "@/constants/theme";
 
 interface CardProps extends ViewProps {
   children?: React.ReactNode;
-  variant?: "default" | "muted" | "dark";
+  variant?: "default" | "muted" | "dark" | "outline" | "accent";
 }
 
 export default function Card({
@@ -26,20 +26,31 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
   },
   default: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: theme.colors.card, // #FFFDF5
     borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
-    ...theme.shadows.card,
+    borderColor: theme.colors.cardBorder, // #E9E6DC
+    ...theme.shadows.subtle,
   },
   muted: {
-    backgroundColor: theme.colors.backgroundAlt,
+    backgroundColor: "#F7F4EB",
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+  },
+  outline: {
+    backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: theme.colors.cardBorder,
   },
   dark: {
-    backgroundColor: theme.colors.darkNavy,
+    backgroundColor: theme.colors.darkNavy, // #171717
     borderWidth: 1,
-    borderColor: theme.colors.darkNavyBorder,
+    borderColor: "#2E2E2E",
+    ...theme.shadows.card,
+  },
+  accent: {
+    backgroundColor: theme.colors.card,
+    borderWidth: 1,
+    borderColor: theme.colors.accentBorder,
     ...theme.shadows.card,
   },
 });

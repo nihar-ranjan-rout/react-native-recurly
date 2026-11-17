@@ -2,56 +2,59 @@ import { Platform } from "react-native";
 
 export const theme = {
   colors: {
-    // Primary Action Palette
-    primary: "#2563EB",
-    primaryHover: "#1D4ED8",
-    primaryLight: "#EFF6FF",
-    primaryBorder: "#BFDBFE",
-
-    // Secondary Accents
-    secondary: "#3B82F6",
-    secondaryLight: "#DBEAFE",
-
-    // Dark Navy (Headers, Navigation, Executive Summary Card)
-    darkNavy: "#0F172A",
-    darkNavyCard: "#1E293B",
-    darkNavyBorder: "#334155",
-
-    // Light Canvas & Cards
-    background: "#F8FAFC",
-    backgroundAlt: "#F1F5F9",
-    card: "#FFFFFF",
-    cardHover: "#F8FAFC",
-    cardBorder: "#E2E8F0",
-    divider: "#F1F5F9",
+    // Primary Design Spec Palette
+    background: "#DDEBE5", // Soft mint-green background
+    backgroundAlt: "#D2E3DC",
+    backgroundMintLight: "#E6F0EB",
+    card: "#FFFDF5", // Cream and off-white surfaces
+    cardHover: "#F7F3E7",
+    cardBorder: "#E9E6DC", // Subtle border
+    divider: "#E9E6DC",
 
     // Typography
-    text: "#0F172A",
-    textSecondary: "#64748B",
-    textMuted: "#94A3B8",
+    text: "#171717", // Black and dark charcoal typography
+    textSecondary: "#777777", // Secondary text
+    textMuted: "#999999",
     textInverse: "#FFFFFF",
 
-    // Form Inputs
-    inputBg: "#FFFFFF",
-    inputBorder: "#CBD5E1",
-    inputBorderFocused: "#2563EB",
-    inputPlaceholder: "#94A3B8",
+    // Accents & Actions
+    primary: "#171717", // Bold dark action button / active tab
+    primaryHover: "#2A2A2A",
+    primaryLight: "#ECE7DA",
+    primaryBorder: "#DCD5C4",
+
+    accent: "#F28C45", // Orange/coral accent color
+    accentHover: "#E07B34",
+    accentLight: "#FDEEE3",
+    accentBorder: "#F9CCA8",
+    accentText: "#C45E1E",
 
     // Semantic Status Indicators
-    success: "#10B981",
-    successBg: "#ECFDF5",
-    successBorder: "#A7F3D0",
-    successText: "#065F46",
+    success: "#2E7D32",
+    successBg: "#EAF4E7",
+    successBorder: "#B7D9A8", // Success Green from spec
+    successText: "#1B5E20",
 
-    warning: "#F59E0B",
-    warningBg: "#FEF3C7",
-    warningBorder: "#FDE68A",
-    warningText: "#92400E",
+    warning: "#F28C45", // Accent Orange
+    warningBg: "#FFF3E8",
+    warningBorder: "#FCD5B5",
+    warningText: "#C45E1E",
 
-    error: "#EF4444",
-    errorBg: "#FEE2E2",
-    errorBorder: "#FECACA",
+    error: "#DC2626",
+    errorBg: "#FEF2F2",
+    errorBorder: "#FCA5A5",
     errorText: "#991B1B",
+
+    // Form inputs
+    inputBg: "#FFFDF5",
+    inputBorder: "#E9E6DC",
+    inputBorderFocused: "#171717",
+    inputPlaceholder: "#999999",
+
+    // Surface dark accent (for contrast pill/card)
+    darkNavy: "#171717",
+    darkNavyCard: "#242424",
+    darkNavyBorder: "#383838",
   },
 
   spacing: {
@@ -67,11 +70,11 @@ export const theme = {
 
   borderRadius: {
     xs: 6,
-    sm: 8,
-    md: 12,
-    lg: 14,
-    xl: 16,
-    xxl: 20,
+    sm: 10,
+    md: 14,
+    lg: 18,
+    xl: 22,
+    xxl: 26,
     full: 9999,
   },
 
@@ -84,51 +87,51 @@ export const theme = {
       elevation: 0,
     },
     subtle: {
-      shadowColor: "#0F172A",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 3,
+      shadowColor: "#171717",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.03,
+      shadowRadius: 6,
       elevation: 1,
       ...(Platform.OS === "web"
-        ? ({ boxShadow: "0 1px 3px 0 rgba(15, 23, 42, 0.05)" } as any)
+        ? ({ boxShadow: "0 2px 6px 0 rgba(23, 23, 23, 0.03)" } as any)
         : {}),
     },
     card: {
-      shadowColor: "#0F172A",
-      shadowOffset: { width: 0, height: 2 },
+      shadowColor: "#171717",
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.04,
-      shadowRadius: 8,
+      shadowRadius: 12,
       elevation: 2,
       ...(Platform.OS === "web"
         ? ({
             boxShadow:
-              "0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06)",
+              "0 4px 12px 0 rgba(23, 23, 23, 0.04), 0 1px 3px 0 rgba(23, 23, 23, 0.02)",
           } as any)
         : {}),
     },
     hover: {
-      shadowColor: "#0F172A",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08,
-      shadowRadius: 12,
+      shadowColor: "#171717",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.07,
+      shadowRadius: 18,
       elevation: 4,
       ...(Platform.OS === "web"
         ? ({
             boxShadow:
-              "0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08)",
+              "0 8px 20px 0 rgba(23, 23, 23, 0.06), 0 2px 6px 0 rgba(23, 23, 23, 0.03)",
           } as any)
         : {}),
     },
     modal: {
-      shadowColor: "#0F172A",
-      shadowOffset: { width: 0, height: 12 },
+      shadowColor: "#171717",
+      shadowOffset: { width: 0, height: 16 },
       shadowOpacity: 0.12,
-      shadowRadius: 28,
+      shadowRadius: 32,
       elevation: 10,
       ...(Platform.OS === "web"
         ? ({
             boxShadow:
-              "0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1)",
+              "0 20px 40px -10px rgba(23, 23, 23, 0.14), 0 4px 12px 0 rgba(23, 23, 23, 0.05)",
           } as any)
         : {}),
     },
@@ -137,55 +140,55 @@ export const theme = {
   typography: {
     display: {
       fontSize: 32,
-      fontWeight: "900" as const,
+      fontWeight: "800" as const,
       lineHeight: 38,
       letterSpacing: -0.6,
-      color: "#0F172A",
+      color: "#171717",
     },
     h1: {
       fontSize: 24,
       fontWeight: "800" as const,
       lineHeight: 30,
       letterSpacing: -0.4,
-      color: "#0F172A",
+      color: "#171717",
     },
     h2: {
       fontSize: 20,
       fontWeight: "700" as const,
       lineHeight: 26,
       letterSpacing: -0.3,
-      color: "#0F172A",
+      color: "#171717",
     },
     h3: {
       fontSize: 16,
       fontWeight: "700" as const,
       lineHeight: 22,
       letterSpacing: -0.2,
-      color: "#0F172A",
+      color: "#171717",
     },
     body: {
       fontSize: 14,
       fontWeight: "400" as const,
       lineHeight: 20,
-      color: "#0F172A",
+      color: "#171717",
     },
     bodyMedium: {
       fontSize: 14,
       fontWeight: "500" as const,
       lineHeight: 20,
-      color: "#0F172A",
+      color: "#171717",
     },
     bodySemibold: {
       fontSize: 14,
       fontWeight: "600" as const,
       lineHeight: 20,
-      color: "#0F172A",
+      color: "#171717",
     },
     small: {
       fontSize: 12,
       fontWeight: "500" as const,
       lineHeight: 16,
-      color: "#64748B",
+      color: "#777777",
     },
     caption: {
       fontSize: 11,
@@ -193,7 +196,7 @@ export const theme = {
       lineHeight: 14,
       letterSpacing: 0.6,
       textTransform: "uppercase" as const,
-      color: "#64748B",
+      color: "#777777",
     },
     button: {
       fontSize: 14,
@@ -203,5 +206,3 @@ export const theme = {
     },
   },
 };
-
-export default theme;

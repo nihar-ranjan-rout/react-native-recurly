@@ -1,14 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
 @import "nativewind/theme";
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-
 html, body, #root {
-  background-color: #F8FAFC !important;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  color: #0F172A;
+  background-color: #DDEBE5 !important;
+  background-image: 
+    radial-gradient(circle at 85% 15%, rgba(242, 140, 69, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 15% 75%, rgba(183, 217, 168, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, #DDEBE5 0%, #E3EFEA 40%, #D8E7E0 100%) !important;
+  background-attachment: fixed !important;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: #171717;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -16,18 +20,58 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
 }
 
+*, *::before, *::after, input, button, select, textarea {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Subtle, breathing ambient float for decorative background elements */
+@keyframes saasFloatSlow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-10px, 8px) scale(1.02);
+  }
+}
+
+@keyframes saasFloatSubtle {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(8px, -6px) scale(1.015);
+  }
+}
+
+.saas-orb-top {
+  animation: saasFloatSlow 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.saas-orb-bottom {
+  animation: saasFloatSubtle 26s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saas-orb-top,
+  .saas-orb-bottom {
+    animation: none !important;
+  }
+}
+
 /* Custom Clean Minimal Scrollbar for Web Browser */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: rgba(221, 235, 229, 0.5);
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #C4D7CF;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #A8C2B8;
 }

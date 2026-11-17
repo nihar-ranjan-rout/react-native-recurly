@@ -1,0 +1,468 @@
+import { addDays, subDays, formatISO } from 'date-fns';
+import { Subscription } from '../../domain/subscription';
+import { PaymentTransaction } from '../../domain/payment';
+import { PaymentMethod } from '../../domain/payment-method';
+import { Mandate } from '../../domain/mandate';
+import { UserProfile } from '../../domain/user';
+import { UserSettings } from '../../domain/settings';
+
+export const SEED_USER_PROFILE: UserProfile = {
+  id: 'user_default',
+  name: 'Rohan Sharma',
+  firstName: 'Rohan',
+  email: 'rohan.sharma@gmail.com',
+  avatarInitial: 'R',
+  plan: 'pro',
+  currency: 'INR',
+  language: 'en',
+};
+
+export const SEED_USER_SETTINGS: UserSettings = {
+  monthlyBudgetPaise: 600000, // ₹6,000.00
+  biometricLockEnabled: false,
+  hideAmountsPrivacy: false,
+  notifyRenewal1Day: true,
+  notifyRenewal3Days: true,
+  notifyRenewal7Days: true,
+  notifyTrialEnding: true,
+  notifyMonthlySummary: true,
+  autoAdvanceRenewals: true,
+  dataSource: 'local',
+  schemaVersion: 1,
+};
+
+export const SEED_PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    id: 'pm_gpay',
+    type: 'upi',
+    name: 'Google Pay',
+    identifier: 'ro***@okhdfcbank',
+    provider: 'gpay',
+    isDefault: true,
+  },
+  {
+    id: 'pm_hdfc_visa',
+    type: 'card',
+    name: 'HDFC Regalia Visa',
+    identifier: '•••• 3014',
+    provider: 'hdfc',
+    isDefault: false,
+  },
+  {
+    id: 'pm_phonepe',
+    type: 'upi',
+    name: 'PhonePe',
+    identifier: 'ro***@ybl',
+    provider: 'phonepe',
+    isDefault: false,
+  },
+  {
+    id: 'pm_icici_rupay',
+    type: 'card',
+    name: 'ICICI Coral RuPay',
+    identifier: '•••• 7109',
+    provider: 'icici',
+    isDefault: false,
+  },
+];
+
+export function getSeedSubscriptions(baseDate: Date = new Date()): Subscription[] {
+  const today = new Date(baseDate);
+
+  return [
+    // 1. ChatGPT Plus ₹1,999/mo Software (overdue)
+    {
+      id: 'sub_chatgpt',
+      userId: 'user_default',
+      name: 'ChatGPT Plus',
+      category: 'software',
+      amountPaise: 199900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 32)),
+      nextRenewalDate: formatISO(subDays(today, 2)), // 2 days overdue
+      paymentMethodId: 'pm_hdfc_visa',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'GPT-4o, DALL-E & Deep Research',
+      reminderDays: 3,
+      color: '#10A37F',
+      icon: 'software',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 199900 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 199900 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 199900 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 2. Netflix ₹649/mo Streaming (due today, AutoPay)
+    {
+      id: 'sub_netflix',
+      userId: 'user_default',
+      name: 'Netflix',
+      category: 'streaming',
+      amountPaise: 64900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 30)),
+      nextRenewalDate: formatISO(today), // Due today
+      paymentMethodId: 'pm_gpay',
+      hasAutoPay: true,
+      mandateId: 'man_netflix',
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Standard 1080p plan with UPI AutoPay',
+      reminderDays: 1,
+      color: '#E50914',
+      icon: 'streaming',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 64900 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 64900 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 64900 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 3. Spotify ₹119/mo Music (3d, AutoPay)
+    {
+      id: 'sub_spotify',
+      userId: 'user_default',
+      name: 'Spotify',
+      category: 'music',
+      amountPaise: 11900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 27)),
+      nextRenewalDate: formatISO(addDays(today, 3)), // 3 days left
+      paymentMethodId: 'pm_gpay',
+      hasAutoPay: true,
+      mandateId: 'man_spotify',
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Premium Individual ad-free',
+      reminderDays: 3,
+      color: '#1DB954',
+      icon: 'music',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 11900 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 11900 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 11900 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 4. GitHub Copilot ₹850/mo Software (4d)
+    {
+      id: 'sub_copilot',
+      userId: 'user_default',
+      name: 'GitHub Copilot',
+      category: 'software',
+      amountPaise: 85000,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 26)),
+      nextRenewalDate: formatISO(addDays(today, 4)), // 4 days left
+      paymentMethodId: 'pm_hdfc_visa',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Individual plan ($10)',
+      reminderDays: 3,
+      color: '#24292E',
+      icon: 'software',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 60)), amountPaise: 85000 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 85000 },
+      ],
+      createdAt: formatISO(subDays(today, 60)),
+      updatedAt: formatISO(today),
+    },
+    // 5. YouTube Premium ₹149/mo Streaming (7d)
+    {
+      id: 'sub_youtube',
+      userId: 'user_default',
+      name: 'YouTube Premium',
+      category: 'streaming',
+      amountPaise: 14900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 23)),
+      nextRenewalDate: formatISO(addDays(today, 7)), // 7 days left
+      paymentMethodId: 'pm_gpay',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Ad-free videos + background play',
+      reminderDays: 3,
+      color: '#FF0000',
+      icon: 'streaming',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 14900 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 14900 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 14900 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 6. Amazon Prime ₹299/mo (13d) — categorize as Streaming/Shopping, NOT Utilities!
+    {
+      id: 'sub_amazon_prime',
+      userId: 'user_default',
+      name: 'Amazon Prime',
+      category: 'streaming',
+      amountPaise: 29900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 17)),
+      nextRenewalDate: formatISO(addDays(today, 13)), // 13 days left
+      paymentMethodId: 'pm_hdfc_visa',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Prime Video, Prime delivery & Prime Music',
+      reminderDays: 3,
+      color: '#00A8E1',
+      icon: 'streaming',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 29900 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 29900 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 29900 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 7. Disney+ Hotstar ₹299/qtr Streaming (17d)
+    {
+      id: 'sub_hotstar',
+      userId: 'user_default',
+      name: 'Disney+ Hotstar',
+      category: 'streaming',
+      amountPaise: 29900, // Quarterly ₹299 = ₹99.67/mo
+      currency: 'INR',
+      billingCycle: 'quarterly',
+      startDate: formatISO(subDays(today, 73)),
+      nextRenewalDate: formatISO(addDays(today, 17)), // 17 days left
+      paymentMethodId: 'pm_phonepe',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Super plan (Full HD, 2 devices)',
+      reminderDays: 7,
+      color: '#113CCF',
+      icon: 'streaming',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 180)), amountPaise: 29900 },
+        { date: formatISO(subDays(today, 90)), amountPaise: 29900 },
+      ],
+      createdAt: formatISO(subDays(today, 180)),
+      updatedAt: formatISO(today),
+    },
+    // 8. Google One ₹130/mo Cloud (22d)
+    {
+      id: 'sub_google_one',
+      userId: 'user_default',
+      name: 'Google One',
+      category: 'cloud',
+      amountPaise: 13000,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 8)),
+      nextRenewalDate: formatISO(addDays(today, 22)), // 22 days left
+      paymentMethodId: 'pm_gpay',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: '100 GB storage for Photos & Drive',
+      reminderDays: 3,
+      color: '#4285F4',
+      icon: 'cloud',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 90)), amountPaise: 13000 },
+        { date: formatISO(subDays(today, 60)), amountPaise: 13000 },
+        { date: formatISO(subDays(today, 30)), amountPaise: 13000 },
+      ],
+      createdAt: formatISO(subDays(today, 90)),
+      updatedAt: formatISO(today),
+    },
+    // 9. JioCinema Premium ₹89/mo Streaming (Paused)
+    {
+      id: 'sub_jiocinema',
+      userId: 'user_default',
+      name: 'JioCinema Premium',
+      category: 'streaming',
+      amountPaise: 8900,
+      currency: 'INR',
+      billingCycle: 'monthly',
+      startDate: formatISO(subDays(today, 45)),
+      nextRenewalDate: formatISO(addDays(today, 10)),
+      paymentMethodId: 'pm_gpay',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'paused', // PAUSED plan!
+      notes: 'Ad-free 4K HBO & Peacock',
+      reminderDays: 3,
+      color: '#D82375',
+      icon: 'streaming',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 60)), amountPaise: 8900 },
+      ],
+      createdAt: formatISO(subDays(today, 60)),
+      updatedAt: formatISO(today),
+    },
+    // 10. Microsoft 365 ₹6,199/yr Software (71d)
+    {
+      id: 'sub_microsoft_365',
+      userId: 'user_default',
+      name: 'Microsoft 365',
+      category: 'software',
+      amountPaise: 619900, // Annual ₹6,199 = ₹516.58/mo
+      currency: 'INR',
+      billingCycle: 'yearly',
+      startDate: formatISO(subDays(today, 294)),
+      nextRenewalDate: formatISO(addDays(today, 71)), // 71 days left
+      paymentMethodId: 'pm_hdfc_visa',
+      hasAutoPay: false,
+      hasGST: true,
+      gstRate: 18,
+      status: 'active',
+      notes: 'Family 6TB plan with Word, Excel, PowerPoint',
+      reminderDays: 7,
+      color: '#D83B01',
+      icon: 'software',
+      sharedWith: 1,
+      mySharePercentage: 100,
+      priceHistory: [
+        { date: formatISO(subDays(today, 365)), amountPaise: 619900 },
+      ],
+      createdAt: formatISO(subDays(today, 365)),
+      updatedAt: formatISO(today),
+    },
+  ];
+}
+
+export function getSeedMandates(): Mandate[] {
+  return [
+    {
+      id: 'man_netflix',
+      umn: 'UMN-2026-98124',
+      subscriptionId: 'sub_netflix',
+      subscriptionName: 'Netflix',
+      paymentMethodId: 'pm_gpay',
+      maxAmountPaise: 150000, // ₹1,500 limit cap
+      frequency: 'monthly',
+      status: 'ACTIVE',
+      startDate: '2026-01-01T00:00:00Z',
+      expiryDate: '2030-12-31T23:59:59Z',
+      lastDebitDate: '2026-10-05T10:30:00Z',
+      nextExpectedDebitDate: '2026-11-05T10:30:00Z',
+    },
+    {
+      id: 'man_spotify',
+      umn: 'UMN-2026-44019',
+      subscriptionId: 'sub_spotify',
+      subscriptionName: 'Spotify',
+      paymentMethodId: 'pm_gpay',
+      maxAmountPaise: 50000, // ₹500 limit cap
+      frequency: 'monthly',
+      status: 'ACTIVE',
+      startDate: '2026-02-01T00:00:00Z',
+      expiryDate: '2030-12-31T23:59:59Z',
+      lastDebitDate: '2026-10-08T11:00:00Z',
+      nextExpectedDebitDate: '2026-11-08T11:00:00Z',
+    },
+  ];
+}
+
+export function getSeedPayments(baseDate: Date = new Date()): PaymentTransaction[] {
+  const today = new Date(baseDate);
+
+  return [
+    // 4 Recent Transactions matching the prompt:
+    {
+      id: 'pay_1',
+      subscriptionId: 'sub_netflix',
+      subscriptionName: 'Netflix',
+      amountPaise: 64900,
+      gstPaise: 9899,
+      currency: 'INR',
+      paymentMethodId: 'pm_icici_rupay',
+      paymentMethodName: 'ICICI Coral RuPay ••7109',
+      date: formatISO(subDays(today, 3)),
+      status: 'paid',
+      receiptNumber: 'REC-2026-8812',
+      notes: 'Standard 1080p plan subscription',
+    },
+    {
+      id: 'pay_2',
+      subscriptionId: 'sub_copilot',
+      subscriptionName: 'GitHub Copilot',
+      amountPaise: 85000,
+      gstPaise: 12966,
+      currency: 'INR',
+      paymentMethodId: 'pm_hdfc_visa',
+      paymentMethodName: 'HDFC Visa ••3014',
+      date: formatISO(subDays(today, 6)),
+      status: 'paid',
+      receiptNumber: 'REC-2026-8790',
+      notes: 'Individual AI pair programmer monthly fee',
+    },
+    {
+      id: 'pay_3',
+      subscriptionId: 'sub_spotify',
+      subscriptionName: 'Spotify Premium',
+      amountPaise: 11900,
+      gstPaise: 1815,
+      currency: 'INR',
+      paymentMethodId: 'pm_gpay',
+      paymentMethodName: 'UPI Google Pay ••7109',
+      date: formatISO(subDays(today, 12)),
+      status: 'paid',
+      receiptNumber: 'REC-2026-8742',
+      notes: 'Premium Individual monthly debit via AutoPay',
+    },
+    {
+      id: 'pay_4',
+      subscriptionId: 'sub_chatgpt',
+      subscriptionName: 'ChatGPT Plus',
+      amountPaise: 199900,
+      gstPaise: 30493,
+      currency: 'INR',
+      paymentMethodId: 'pm_hdfc_visa',
+      paymentMethodName: 'HDFC Visa ••3014',
+      date: formatISO(subDays(today, 25)),
+      status: 'paid',
+      receiptNumber: 'REC-2026-8651',
+      notes: 'OpenAI GPT-4o monthly subscription',
+    },
+  ];
+}
+

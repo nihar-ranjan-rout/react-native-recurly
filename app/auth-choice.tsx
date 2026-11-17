@@ -106,6 +106,35 @@ export default function AuthChoice() {
                     color={theme.colors.textMuted}
                   />
                 </Pressable>
+
+                {/* 1-CLICK DEMO SHORTCUT */}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.demoButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(auth)/sign-in",
+                      params: { demo: "user" },
+                    })
+                  }
+                  accessibilityLabel="Explore 1-Click Interactive Demo"
+                >
+                  <Ionicons
+                    name="flash"
+                    size={15}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.demoButtonText}>
+                    Explore Interactive Demo
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={15}
+                    color={theme.colors.primary}
+                  />
+                </Pressable>
               </View>
 
               {/* STATS HIGHLIGHT ROW */}
@@ -295,6 +324,24 @@ const styles = StyleSheet.create({
     flex: 1,
     color: theme.colors.text,
     fontSize: 14.5,
+    fontWeight: "700",
+  },
+  demoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    height: 44,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.primaryLight,
+    borderWidth: 1,
+    borderColor: "rgba(37, 99, 235, 0.2)",
+    paddingHorizontal: 16,
+    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
+  },
+  demoButtonText: {
+    color: theme.colors.primary,
+    fontSize: 13.5,
     fontWeight: "700",
   },
 

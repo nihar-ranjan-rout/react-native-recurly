@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { theme } from "@/constants/theme";
 
-export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "accent";
 export type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
@@ -60,7 +60,7 @@ export default function Button({
         <ActivityIndicator
           size="small"
           color={
-            variant === "primary" ? "#FFFFFF" : theme.colors.textSecondary
+            variant === "primary" || variant === "accent" ? "#FFFFFF" : theme.colors.textSecondary
           }
         />
       ) : (
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: theme.borderRadius.md,
     gap: 8,
-    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
+    ...(Platform.OS === "web" ? ({ cursor: "pointer", transition: "all 0.15s ease" } as any) : {}),
   },
   fullWidth: {
     width: "100%",
@@ -102,29 +102,41 @@ const styles = StyleSheet.create({
 
   // VARIANTS
   primary: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary, // #171717
     ...theme.shadows.subtle,
   },
   primaryPressed: {
-    backgroundColor: theme.colors.primaryHover,
+    backgroundColor: theme.colors.primaryHover, // #2A2A2A
   },
   primaryText: {
     color: "#FFFFFF",
     fontWeight: "700",
   },
 
+  accent: {
+    backgroundColor: theme.colors.accent, // #F28C45
+    ...theme.shadows.subtle,
+  },
+  accentPressed: {
+    backgroundColor: theme.colors.accentHover,
+  },
+  accentText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+  },
+
   secondary: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: theme.colors.card, // #FFFDF5
     borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
+    borderColor: theme.colors.cardBorder, // #E9E6DC
     ...theme.shadows.subtle,
   },
   secondaryPressed: {
-    backgroundColor: theme.colors.backgroundAlt,
+    backgroundColor: "#F5F0E4",
     borderColor: theme.colors.inputBorder,
   },
   secondaryText: {
-    color: theme.colors.text,
+    color: theme.colors.text, // #171717
     fontWeight: "700",
   },
 
@@ -145,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   ghostPressed: {
-    backgroundColor: theme.colors.backgroundAlt,
+    backgroundColor: "rgba(0, 0, 0, 0.04)",
   },
   ghostText: {
     color: theme.colors.textSecondary,
@@ -169,7 +181,7 @@ const styles = StyleSheet.create({
   },
   lg: {
     height: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
     borderRadius: theme.borderRadius.lg,
   },
   lgText: {

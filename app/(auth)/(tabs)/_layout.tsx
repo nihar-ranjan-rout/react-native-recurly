@@ -1,31 +1,36 @@
 import React from "react";
 import { Platform } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
-import { theme } from "@/constants/theme";
+import { colors } from "@/src/ui/tokens";
+import Icon from "@/src/ui/Icon";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarActiveTintColor: colors.nearBlack,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
-          backgroundColor: theme.colors.card,
-          borderTopColor: theme.colors.cardBorder,
+          backgroundColor: colors.cardCream,
+          borderTopColor: colors.cardBorderWarm,
           borderTopWidth: 1,
           height: Platform.OS === "ios" ? 84 : 64,
           paddingTop: 8,
           paddingBottom: Platform.OS === "ios" ? 28 : 10,
           elevation: 4,
-          shadowColor: theme.colors.darkNavy,
+          shadowColor: "#161616",
           shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.04,
-          shadowRadius: 8,
+          shadowOpacity: 0.05,
+          shadowRadius: 10,
           ...(Platform.OS === "web"
             ? ({
-                boxShadow: "0 -1px 3px 0 rgba(15, 23, 42, 0.04)",
+                maxWidth: 720,
+                alignSelf: "center",
+                width: "100%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                boxShadow: "0 -2px 10px 0 rgba(22, 22, 22, 0.05)",
               } as any)
             : {}),
         },
@@ -40,12 +45,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "home" : "home-outline"}
+            <Icon
+              name="home"
               size={22}
-              color={color}
+              color={focused ? colors.nearBlack : colors.textSecondary}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -54,12 +60,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="subscription/index"
         options={{
-          title: "Plans",
+          title: "Subscriptions",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "layers" : "layers-outline"}
+            <Icon
+              name="subscription"
               size={22}
-              color={color}
+              color={focused ? colors.nearBlack : colors.textSecondary}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -70,10 +77,11 @@ export default function TabLayout() {
         options={{
           title: "Analytics",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "pie-chart" : "pie-chart-outline"}
+            <Icon
+              name="analytics"
               size={22}
-              color={color}
+              color={focused ? colors.nearBlack : colors.textSecondary}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -84,36 +92,27 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "person" : "person-outline"}
+            <Icon
+              name="user"
               size={22}
-              color={color}
+              color={focused ? colors.nearBlack : colors.textSecondary}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
       />
 
-      {/* Dynamic or auxiliary screens hidden from bottom tabs */}
+      {/* Auxiliary screens hidden from tabs */}
       <Tabs.Screen
         name="subscription/[id]"
         options={{
           href: null,
-          title: "Details",
         }}
       />
-
-      <Tabs.Screen
-        name="subscription"
-        options={{
-          href: null,
-        }}
-      />
-
       <Tabs.Screen
         name="setting"
         options={{
           href: null,
-          title: "Settings",
         }}
       />
     </Tabs>

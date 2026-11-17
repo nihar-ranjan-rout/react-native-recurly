@@ -19,34 +19,30 @@ const features = [
   {
     icon: "search-outline" as const,
     title: "Portfolio Discovery",
-    description:
-      "Connect and catalog all your active subscriptions and recurring bills.",
-    color: theme.colors.primary,
-    bgColor: theme.colors.primaryLight,
+    description: "Connect and catalog all your active subscriptions and recurring bills.",
+    color: theme.colors.accent,
+    bgColor: theme.colors.accentLight,
   },
   {
     icon: "flash-outline" as const,
     title: "Predictive Run-Rate",
-    description:
-      "Accurate monthly outflow tracking and annual spend projections.",
-    color: theme.colors.warning,
-    bgColor: theme.colors.warningBg,
+    description: "Accurate monthly outflow tracking and annual spend projections.",
+    color: "#2E7D32",
+    bgColor: "#EAF4E7",
   },
   {
     icon: "notifications-outline" as const,
     title: "Proactive Alerts",
-    description:
-      "Smart reminders sent 48 hours before any auto-renewal charges.",
-    color: theme.colors.secondary,
-    bgColor: theme.colors.secondaryLight,
+    description: "Smart reminders sent 48 hours before any auto-renewal charges.",
+    color: theme.colors.accent,
+    bgColor: theme.colors.accentLight,
   },
   {
     icon: "trending-down-outline" as const,
     title: "Expense Control",
-    description:
-      "Spot unused plans, cancel forgotten trials, and optimize spend.",
-    color: theme.colors.success,
-    bgColor: theme.colors.successBg,
+    description: "Spot unused plans, cancel forgotten trials, and optimize spend.",
+    color: "#2E7D32",
+    bgColor: "#EAF4E7",
   },
 ];
 
@@ -88,35 +84,51 @@ export default function Onboarding() {
             {/* Brand Header */}
             <View style={styles.brand}>
               <View style={styles.brandMark}>
-                <Ionicons name="layers" size={18} color="#FFFFFF" />
+                <Ionicons name="sparkles" size={18} color="#FFFFFF" />
               </View>
               <Text style={styles.brandText}>recurly</Text>
+              <View style={styles.brandBadge}>
+                <Text style={styles.brandBadgeText}>Fintech Edition</Text>
+              </View>
             </View>
 
-            {/* STEP 0 */}
+            {/* STEP 0: Welcome Screen */}
             {step === 0 ? (
               <View style={styles.stepContainer}>
-                {/* Illustration */}
+                {/* Modern Abstract Geometric Illustration Graphic */}
                 <View style={styles.artworkWrap}>
-                  <Illustration
-                    name="onboarding-track"
-                    width={260}
-                    height={210}
-                  />
+                  <View style={styles.abstractShapeOuter}>
+                    <View style={styles.abstractShapeMiddle}>
+                      <Illustration
+                        name="onboarding-track"
+                        width={240}
+                        height={190}
+                      />
+                    </View>
+                  </View>
+
+                  {/* Floating Metric Pill */}
+                  <View style={styles.floatingPill}>
+                    <View style={styles.floatingPillDot} />
+                    <Text style={styles.floatingPillText}>Total active: $78.96/mo</Text>
+                  </View>
                 </View>
 
                 {/* Copy Block */}
                 <View style={styles.copyBlock}>
-                  <Text style={styles.eyebrow}>
-                    SUBSCRIPTION INTELLIGENCE
-                  </Text>
+                  <Text style={styles.eyebrow}>SUBSCRIPTION INTELLIGENCE</Text>
                   <Text style={styles.heroTitle}>
-                    Master Your{"\n"}Subscriptions
+                    Streamline your{"\n"}subscriptions.
                   </Text>
                   <Text style={styles.description}>
-                    The smart, effortless way to track recurring bills, forecast
-                    renewals, and eliminate wasteful spend.
+                    The smart, effortless way to track recurring bills, forecast renewals, and take full control of your financial outflow.
                   </Text>
+                </View>
+
+                {/* Progress Indicators */}
+                <View style={[styles.progressRow, { marginBottom: 20 }]}>
+                  <View style={styles.progressActive} />
+                  <View style={styles.progressInactive} />
                 </View>
 
                 {/* Primary CTA */}
@@ -130,14 +142,14 @@ export default function Onboarding() {
 
                 {/* Sign In Link */}
                 <View style={styles.signInRow}>
-                  <Text style={styles.mutedText}>Already using Recurly?</Text>
+                  <Text style={styles.mutedText}>Already have an account?</Text>
                   <Pressable onPress={goToSignIn} hitSlop={8}>
                     <Text style={styles.linkText}>Sign In</Text>
                   </Pressable>
                 </View>
               </View>
             ) : (
-              /* STEP 1 */
+              /* STEP 1: Feature Overview */
               <View style={styles.stepContainer}>
                 {/* Copy Block */}
                 <View style={styles.copyBlock}>
@@ -146,8 +158,7 @@ export default function Onboarding() {
                     Take Control of{"\n"}Your Outflow
                   </Text>
                   <Text style={styles.description}>
-                    Everything you need to manage your personal and business
-                    subscriptions in one place.
+                    Everything you need to manage your personal and business subscriptions in one place.
                   </Text>
                 </View>
 
@@ -183,8 +194,8 @@ export default function Onboarding() {
                 <View style={styles.footerWrap}>
                   {/* Step Progress Indicators */}
                   <View style={styles.progressRow}>
-                    <View style={styles.progressActive} />
                     <View style={styles.progressInactive} />
+                    <View style={styles.progressActive} />
                   </View>
 
                   <Pressable
@@ -239,21 +250,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   brandMark: {
     width: 36,
     height: 36,
-    borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.primary,
+    borderRadius: 12,
+    backgroundColor: theme.colors.primary, // #171717
     alignItems: "center",
     justifyContent: "center",
   },
   brandText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "900",
     color: theme.colors.text,
-    letterSpacing: -0.4,
+    letterSpacing: -0.5,
+  },
+  brandBadge: {
+    backgroundColor: theme.colors.accentLight,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: theme.colors.accentBorder,
+  },
+  brandBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: theme.colors.accentText,
   },
 
   stepContainer: {
@@ -263,24 +287,65 @@ const styles = StyleSheet.create({
   artworkWrap: {
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 12,
+    marginVertical: 14,
+    position: "relative",
+  },
+  abstractShapeOuter: {
+    padding: 16,
+    borderRadius: 36,
+    backgroundColor: "rgba(255, 253, 245, 0.6)",
+    borderWidth: 1,
+    borderColor: "#E9E6DC",
+  },
+  abstractShapeMiddle: {
+    padding: 12,
+    borderRadius: 28,
+    backgroundColor: "#FFFDF5",
+    borderWidth: 1,
+    borderColor: "#E9E6DC",
+    ...theme.shadows.card,
+  },
+  floatingPill: {
+    position: "absolute",
+    bottom: -8,
+    backgroundColor: theme.colors.primary, // #171717
+    borderRadius: 9999,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    ...theme.shadows.card,
+  },
+  floatingPillDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: theme.colors.accent, // #F28C45
+  },
+  floatingPillText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: -0.1,
   },
 
   copyBlock: {
-    marginBottom: 24,
+    marginTop: 22,
+    marginBottom: 20,
   },
   eyebrow: {
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.8,
-    color: theme.colors.primary,
+    color: theme.colors.accentText,
     marginBottom: 6,
     textTransform: "uppercase",
   },
   heroTitle: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "900",
-    lineHeight: 34,
+    lineHeight: 36,
     letterSpacing: -0.6,
     color: theme.colors.text,
     marginBottom: 10,
@@ -295,7 +360,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14.5,
-    lineHeight: 21,
+    lineHeight: 22,
     color: theme.colors.textSecondary,
   },
 
@@ -304,11 +369,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    height: 50,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.primary,
+    height: 52,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: theme.colors.primary, // #171717
     ...theme.shadows.subtle,
-    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
+    ...(Platform.OS === "web" ? ({ cursor: "pointer", transition: "all 0.15s ease" } as any) : {}),
   },
   primaryButtonText: {
     color: "#FFFFFF",
@@ -330,7 +395,7 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 13.5,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: theme.colors.accent,
     ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
   },
 
@@ -342,37 +407,37 @@ const styles = StyleSheet.create({
   featureCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.borderRadius.lg,
-    padding: 14,
+    backgroundColor: theme.colors.card, // #FFFDF5
+    borderRadius: theme.borderRadius.xl,
+    padding: 16,
     borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
+    borderColor: theme.colors.cardBorder, // #E9E6DC
     ...theme.shadows.subtle,
   },
   featureIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: theme.borderRadius.md,
+    width: 42,
+    height: 42,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: 14,
   },
   featureText: {
     flex: 1,
   },
   featureTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "700",
     color: theme.colors.text,
-    letterSpacing: -0.2,
     marginBottom: 2,
   },
   featureDescription: {
     fontSize: 12.5,
     color: theme.colors.textSecondary,
-    lineHeight: 17,
+    lineHeight: 18,
   },
 
+  // FOOTER WRAP
   footerWrap: {
     gap: 16,
   },
@@ -380,7 +445,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 6,
   },
   progressActive: {
     width: 24,
@@ -389,9 +454,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   progressInactive: {
-    width: 6,
+    width: 8,
     height: 6,
     borderRadius: 3,
-    backgroundColor: theme.colors.inputBorder,
+    backgroundColor: "#C6DDD4",
   },
 });

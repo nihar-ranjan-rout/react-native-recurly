@@ -74,8 +74,9 @@ export default function AdminConsole() {
   const loadData = useCallback(async () => {
     try {
       const session = await getAdminSession();
-      if (!session) {
+      if (!session || session.role !== "admin") {
         setAdminSession(null);
+        router.replace("/(auth)/(tabs)");
         return;
       }
       setAdminSession(session);

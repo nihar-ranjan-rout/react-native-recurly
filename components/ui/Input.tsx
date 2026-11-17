@@ -68,18 +68,17 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: "600",
     color: theme.colors.text,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
     marginBottom: 6,
-    textTransform: "uppercase",
   },
   inputWrapper: {
     height: 48,
-    backgroundColor: theme.colors.inputBg,
+    backgroundColor: theme.colors.inputBg, // #FFFDF5
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme.colors.inputBorder,
+    borderColor: theme.colors.inputBorder, // #E9E6DC
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
@@ -89,10 +88,10 @@ const styles = StyleSheet.create({
       : {}),
   },
   inputWrapperFocused: {
-    borderColor: theme.colors.primary,
+    borderColor: theme.colors.accent,
     ...(Platform.OS === "web"
       ? ({
-          boxShadow: "0 0 0 3px rgba(37, 99, 235, 0.12)",
+          boxShadow: "0 0 0 3px rgba(242, 140, 69, 0.15)",
         } as any)
       : {}),
   },
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
     height: "100%",
     fontSize: 14,
     color: theme.colors.text,
+    ...(Platform.OS === "web" ? ({ outlineStyle: "none" } as any) : {}),
   },
   iconWrap: {
     alignItems: "center",

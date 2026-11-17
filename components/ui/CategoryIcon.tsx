@@ -1,7 +1,8 @@
 import React from 'react';
-import { Image, ImageProps } from 'react-native';
+import { View, StyleProp, ViewStyle } from 'react-native';
+import Icon, { IconName } from '@/src/ui/Icon';
 
-type CategoryName = 
+type CategoryName =
   | 'cloud'
   | 'fitness'
   | 'gaming'
@@ -10,39 +11,24 @@ type CategoryName =
   | 'software'
   | 'streaming'
   | 'utilities'
+  | 'shopping'
   | 'other';
 
-interface CategoryIconProps extends Omit<ImageProps, 'source'> {
+interface CategoryIconProps {
   category: CategoryName;
   size?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
-const categoryMap: Partial<Record<CategoryName, any>> = {
-  cloud: require('@/assets/icons/categories/cloud.png'),
-  fitness: require('@/assets/icons/categories/fitness.png'),
-  gaming: require('@/assets/icons/categories/gaming.png'),
-  music: require('@/assets/icons/categories/music.png'),
-  reading: require('@/assets/icons/categories/reading.png'),
-  software: require('@/assets/icons/categories/software.png'),
-  streaming: require('@/assets/icons/categories/streaming.png'),
-  utilities: require('@/assets/icons/categories/utilities.png'),
-};
-
-export default function CategoryIcon({ 
-  category, 
-  size = 48,
+export default function CategoryIcon({
+  category,
+  size = 32,
   style,
-  ...props 
 }: CategoryIconProps) {
-  const source = categoryMap[category] || categoryMap.utilities;
+  const iconName: IconName = (category as IconName) || 'subscription';
   return (
-    <Image
-      source={source}
-      style={[
-        { width: size, height: size },
-        style,
-      ]}
-      {...props}
-    />
+    <View style={style}>
+      <Icon name={iconName} size={size} />
+    </View>
   );
 }

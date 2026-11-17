@@ -3,7 +3,6 @@ import "@/global.css";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -22,21 +21,6 @@ import Badge from "@/components/ui/Badge";
 import { theme } from "@/constants/theme";
 import { createUser } from "@/lib/auth";
 
-const showAlert = (
-  title: string,
-  message: string,
-  buttons?: { text?: string; onPress?: () => void }[]
-) => {
-  if (Platform.OS === "web") {
-    window.alert(`${title}\n\n${message}`);
-    if (buttons && buttons[0] && buttons[0].onPress) {
-      buttons[0].onPress();
-    }
-  } else {
-    Alert.alert(title, message, buttons);
-  }
-};
-
 export default function SignUp() {
   const router = useRouter();
 
@@ -48,40 +32,39 @@ export default function SignUp() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSignUp = async () => {
     if (isSubmitting) return;
+    setFormError(null);
 
     if (!name.trim()) {
-      showAlert("Required", "Please enter your full name.");
+      setFormError("Please enter your full name.");
       return;
     }
 
     if (!email.trim()) {
-      showAlert("Required", "Please enter your email.");
+      setFormError("Please enter your email address.");
       return;
     }
 
     if (!email.includes("@")) {
-      showAlert("Invalid Email", "Please enter a valid email address.");
+      setFormError("Please enter a valid email address.");
       return;
     }
 
     if (!password.trim()) {
-      showAlert("Required", "Please enter your password.");
+      setFormError("Please enter a password.");
       return;
     }
 
     if (password.length < 6) {
-      showAlert(
-        "Weak Password",
-        "Password must contain at least 6 characters."
-      );
+      setFormError("Password must contain at least 6 characters.");
       return;
     }
 
     if (password !== confirmPassword) {
-      showAlert("Password Mismatch", "Passwords do not match.");
+      setFormError("Passwords do not match.");
       return;
     }
 
@@ -96,7 +79,7 @@ export default function SignUp() {
           ? error.message
           : "Unable to create your account right now.";
 
-      showAlert("Account Creation Failed", message);
+      setFormError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -155,6 +138,14 @@ export default function SignUp() {
                     Join Recurly to take control of your recurring subscriptions
                   </Text>
                 </View>
+
+                {/* INLINE FORM ERROR BANNER */}
+                {formError ? (
+                  <View style={styles.formErrorBanner}>
+                    <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                    <Text style={styles.formErrorText}>{formError}</Text>
+                  </View>
+                ) : null}
 
                 {/* NAME INPUT */}
                 <View style={styles.inputContainer}>
@@ -447,6 +438,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 19,
     maxWidth: 290,
+  },
+
+  // ERROR BANNER
+  formErrorBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#FEF2F2",
+    borderWidth: 1,
+    borderColor: "#FECACA",
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  formErrorText: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: "500",
+    color: "#DC2626",
+    lineHeight: 18,
   },
 
   // INPUTS

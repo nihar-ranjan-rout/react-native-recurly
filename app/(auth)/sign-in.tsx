@@ -3,7 +3,6 @@ import "@/global.css";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -20,58 +19,95 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import AppBackground from "@/components/ui/AppBackground";
 import Badge from "@/components/ui/Badge";
 import { theme } from "@/constants/theme";
-import { signInAdmin, signInUser } from "@/lib/auth";
-
-const showAlert = (title: string, message: string) => {
-  if (Platform.OS === "web") {
-    window.alert(`${title}\n\n${message}`);
-  } else {
-    Alert.alert(title, message);
-  }
-};
+import { resetPassword, signInAdmin, signInUser } from "@/lib/auth";
 
 export default function SignIn() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ mode?: string }>();
+  const params = useLocalSearchParams<{ demo?: string }>();
 
-  const [portalType, setPortalType] = useState<"user" | "admin">(
-    params.mode === "admin" ? "admin" : "user"
+  const [email, setEmail] = useState(
+    params.demo === "admin"
+      ? "admin@recurly.app"
+      : params.demo === "user"
+      ? "nihar@example.com"
+      : ""
   );
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(
+    params.demo === "admin"
+      ? "admin123"
+      : params.demo === "user"
+      ? "password123"
+      : ""
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [focusedInput, setFocusedInput] = useState<
     "email" | "password" | null
   >(null);
+
+  const handleDemoFill = (type: "user" | "admin") => {
+    if (type === "admin") {
+      setEmail("admin@recurly.app");
+      setPassword("admin123");
+    } else {
+      setEmail("nihar@example.com");
+      setPassword("password123");
+    }
+    setFormError(null);
+    setFormSuccess(null);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim() || !email.includes("@")) {
+      setFormError("Please enter your email above to receive a password reset link.");
+      return;
+    }
+    setFormError(null);
+    try {
+      await resetPassword(email);
+      setFormSuccess("A secure password reset link has been dispatched to your email.");
+    } catch (err: any) {
+      setFormError(err.message || "Failed to initiate password reset.");
+    }
+  };
 
   const handleSignIn = async () => {
     if (isSubmitting) return;
 
     if (!email.trim()) {
-      showAlert("Required", "Please enter your email address.");
+      setFormError("Please enter your email address.");
       return;
     }
 
     if (!password.trim()) {
-      showAlert("Required", "Please enter your password.");
+      setFormError("Please enter your password.");
       return;
     }
 
     if (!email.includes("@")) {
-      showAlert("Invalid Email", "Please enter a valid email address.");
+      setFormError("Please enter a valid email address.");
       return;
     }
 
+    setFormError(null);
+    setFormSuccess(null);
     setIsSubmitting(true);
 
     try {
-      if (portalType === "admin") {
+      const normalizedEmail = email.trim().toLowerCase();
+      // Server-seeded master admin
+      if (normalizedEmail === "admin@recurly.app") {
         await signInAdmin({ email, password });
         router.replace("/admin" as any);
       } else {
-        await signInUser({ email, password });
-        router.replace("/(auth)/(tabs)");
+        const session = await signInUser({ email, password });
+        if (session.role === "admin") {
+          router.replace("/admin" as any);
+        } else {
+          router.replace("/app" as any);
+        }
       }
     } catch (error) {
       const message =
@@ -79,7 +115,7 @@ export default function SignIn() {
           ? error.message
           : "Unable to sign in right now. Please try again.";
 
-      showAlert(portalType === "admin" ? "Admin Access Denied" : "Sign In Failed", message);
+      setFormError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -125,90 +161,35 @@ export default function SignIn() {
 
               {/* CENTERED SAAS CARD */}
               <View style={styles.card}>
-                {/* PORTAL SELECTOR TABS */}
-                <View style={styles.portalToggle}>
-                  <Pressable
-                    style={[
-                      styles.portalTab,
-                      portalType === "user" && styles.portalTabActive,
-                    ]}
-                    onPress={() => {
-                      setPortalType("user");
-                      setEmail("");
-                      setPassword("");
-                    }}
-                  >
-                    <Ionicons
-                      name="person"
-                      size={14}
-                      color={portalType === "user" ? "#FFFFFF" : theme.colors.textSecondary}
-                    />
-                    <Text
-                      style={[
-                        styles.portalTabText,
-                        portalType === "user" && styles.portalTabTextActive,
-                      ]}
-                    >
-                      Member Sign In
-                    </Text>
-                  </Pressable>
-
-                  <Pressable
-                    style={[
-                      styles.portalTab,
-                      portalType === "admin" && styles.portalTabActiveAdmin,
-                    ]}
-                    onPress={() => {
-                      setPortalType("admin");
-                      setEmail("");
-                      setPassword("");
-                    }}
-                  >
-                    <Ionicons
-                      name="shield-checkmark"
-                      size={14}
-                      color={portalType === "admin" ? "#FFFFFF" : theme.colors.textSecondary}
-                    />
-                    <Text
-                      style={[
-                        styles.portalTabText,
-                        portalType === "admin" && styles.portalTabTextActive,
-                      ]}
-                    >
-                      Admin Portal
-                    </Text>
-                  </Pressable>
-                </View>
-
                 {/* BRAND HEADER */}
                 <View style={styles.header}>
-                  <View
-                    style={[
-                      styles.logoBadge,
-                      portalType === "admin" && { backgroundColor: theme.colors.darkNavy },
-                    ]}
-                  >
-                    <Ionicons
-                      name={portalType === "admin" ? "shield-checkmark" : "layers"}
-                      size={26}
-                      color="#FFFFFF"
-                    />
+                  <View style={styles.logoBadge}>
+                    <Ionicons name="layers" size={26} color="#FFFFFF" />
                   </View>
 
-                  <Badge
-                    label={portalType === "admin" ? "APP OWNER CONSOLE" : "RECURLY ACCESS"}
-                    variant={portalType === "admin" ? "primary" : "primary"}
-                  />
+                  <Badge label="RECURLY ACCESS" variant="primary" />
 
-                  <Text style={styles.title}>
-                    {portalType === "admin" ? "Admin Console Sign In" : "Welcome Back"}
-                  </Text>
+                  <Text style={styles.title}>Welcome Back</Text>
                   <Text style={styles.subtitle}>
-                    {portalType === "admin"
-                      ? "Authenticate with administrator credentials to manage app plans and catalog."
-                      : "Sign in to manage your subscription portfolio."}
+                    Sign in to your Recurly account
                   </Text>
                 </View>
+
+                {/* INLINE FORM ERROR BANNER */}
+                {formError ? (
+                  <View style={styles.formErrorBanner}>
+                    <Ionicons name="alert-circle" size={16} color={theme.colors.error} />
+                    <Text style={styles.formErrorText}>{formError}</Text>
+                  </View>
+                ) : null}
+
+                {/* INLINE FORM SUCCESS BANNER */}
+                {formSuccess ? (
+                  <View style={styles.formSuccessBanner}>
+                    <Ionicons name="checkmark-circle" size={16} color={theme.colors.success} />
+                    <Text style={styles.formSuccessText}>{formSuccess}</Text>
+                  </View>
+                ) : null}
 
                 {/* EMAIL INPUT */}
                 <View style={styles.inputContainer}>
@@ -230,14 +211,14 @@ export default function SignIn() {
                     />
                     <TextInput
                       style={styles.input}
-                      placeholder={
-                        portalType === "admin"
-                          ? "admin@company.com"
-                          : "alex@example.com"
-                      }
+                      placeholder="your@email.com"
                       placeholderTextColor={theme.colors.inputPlaceholder}
                       value={email}
-                      onChangeText={setEmail}
+                      onChangeText={(val) => {
+                        setEmail(val);
+                        if (formError) setFormError(null);
+                        if (formSuccess) setFormSuccess(null);
+                      }}
                       keyboardType="email-address"
                       autoCapitalize="none"
                       autoCorrect={false}
@@ -271,7 +252,11 @@ export default function SignIn() {
                       placeholder="Enter your password"
                       placeholderTextColor={theme.colors.inputPlaceholder}
                       value={password}
-                      onChangeText={setPassword}
+                      onChangeText={(val) => {
+                        setPassword(val);
+                        if (formError) setFormError(null);
+                        if (formSuccess) setFormSuccess(null);
+                      }}
                       secureTextEntry={!showPassword}
                       onFocus={() => setFocusedInput("password")}
                       onBlur={() => setFocusedInput(null)}
@@ -293,11 +278,17 @@ export default function SignIn() {
                   </View>
                 </View>
 
+                {/* FORGOT PASSWORD ACTION */}
+                <View style={styles.forgotPasswordRow}>
+                  <Pressable onPress={handleForgotPassword}>
+                    <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+                  </Pressable>
+                </View>
+
                 {/* PRIMARY SIGN IN BUTTON */}
                 <Pressable
                   style={({ pressed }) => [
                     styles.submitButton,
-                    portalType === "admin" && styles.submitButtonAdmin,
                     isSubmitting && styles.buttonDisabled,
                     pressed && styles.buttonPressed,
                   ]}
@@ -308,9 +299,7 @@ export default function SignIn() {
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   ) : (
                     <>
-                      <Text style={styles.buttonText}>
-                        {portalType === "admin" ? "Sign In to Admin Console" : "Sign In"}
-                      </Text>
+                      <Text style={styles.buttonText}>Sign In</Text>
                       <Ionicons
                         name="arrow-forward"
                         size={18}
@@ -320,10 +309,64 @@ export default function SignIn() {
                   )}
                 </Pressable>
 
+                {/* 1-CLICK DEMO FILL */}
+                <View style={styles.demoBox}>
+                  <View style={styles.demoHeader}>
+                    <View style={styles.demoHeaderTitleRow}>
+                      <Ionicons name="flash" size={13} color={theme.colors.primary} />
+                      <Text style={styles.demoTitle}>1-Click Demo Fill</Text>
+                    </View>
+                    <Text style={styles.demoSubtitle}>Tap to auto-fill sample credentials</Text>
+                  </View>
+
+                  <View style={styles.demoBtnRow}>
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.demoPill,
+                        email === "nihar@example.com" && styles.demoPillActive,
+                        pressed && styles.buttonPressed,
+                      ]}
+                      onPress={() => handleDemoFill("user")}
+                      accessibilityLabel="Autofill Subscriber demo credentials"
+                    >
+                      <Ionicons
+                        name="person-circle"
+                        size={18}
+                        color={theme.colors.primary}
+                      />
+                      <View style={styles.demoPillContent}>
+                        <Text style={styles.demoPillRole}>Subscriber Demo</Text>
+                        <Text style={styles.demoPillCreds} numberOfLines={1}>nihar@example.com</Text>
+                      </View>
+                    </Pressable>
+
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.demoPill,
+                        styles.demoPillAdmin,
+                        email === "admin@recurly.app" && styles.demoPillActiveAdmin,
+                        pressed && styles.buttonPressed,
+                      ]}
+                      onPress={() => handleDemoFill("admin")}
+                      accessibilityLabel="Autofill Admin demo credentials"
+                    >
+                      <Ionicons
+                        name="shield-checkmark"
+                        size={18}
+                        color={theme.colors.darkNavy}
+                      />
+                      <View style={styles.demoPillContent}>
+                        <Text style={styles.demoPillRoleAdmin}>Admin Demo</Text>
+                        <Text style={styles.demoPillCreds} numberOfLines={1}>admin@recurly.app</Text>
+                      </View>
+                    </Pressable>
+                  </View>
+                </View>
+
                 {/* SIGN UP SWITCH ROW */}
                 <View style={styles.signupContainer}>
                   <Text style={styles.accountText}>
-                    Don't have an account?
+                    {"Don't have an account?"}
                   </Text>
                   <Pressable onPress={() => router.push("/(auth)/sign-up")}>
                     <Text style={styles.signupText}>Create Account</Text>
@@ -402,43 +445,6 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     ...theme.shadows.modal,
   },
-  portalToggle: {
-    flexDirection: "row",
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.borderRadius.md,
-    padding: 4,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
-  },
-  portalTab: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 8,
-    borderRadius: 6,
-    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
-  },
-  portalTabActive: {
-    backgroundColor: theme.colors.primary,
-  },
-  portalTabActiveAdmin: {
-    backgroundColor: theme.colors.darkNavy,
-  },
-  portalTabText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: theme.colors.textSecondary,
-  },
-  portalTabTextActive: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-  },
-  submitButtonAdmin: {
-    backgroundColor: theme.colors.darkNavy,
-  },
   header: {
     alignItems: "center",
     marginBottom: 24,
@@ -467,6 +473,57 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 19,
     maxWidth: 290,
+  },
+
+  // ERROR BANNER
+  formErrorBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#FEF2F2",
+    borderWidth: 1,
+    borderColor: "#FECACA",
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  formErrorText: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: "500",
+    color: "#DC2626",
+    lineHeight: 18,
+  },
+  formSuccessBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: theme.colors.successBg,
+    borderWidth: 1,
+    borderColor: theme.colors.successBorder,
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  formSuccessText: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: "600",
+    color: theme.colors.successText,
+    lineHeight: 18,
+  },
+  forgotPasswordRow: {
+    alignItems: "flex-end",
+    marginBottom: 12,
+    marginTop: -4,
+  },
+  forgotPasswordText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: theme.colors.textSecondary,
+    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
   },
 
   // INPUTS
@@ -534,6 +591,85 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14.5,
     fontWeight: "700",
+  },
+
+  // DEMO BOX
+  demoBox: {
+    marginTop: 18,
+    padding: 12,
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+  },
+  demoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+    paddingHorizontal: 2,
+  },
+  demoHeaderTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  demoTitle: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: theme.colors.text,
+    letterSpacing: 0.3,
+  },
+  demoSubtitle: {
+    fontSize: 10.5,
+    color: theme.colors.textMuted,
+    fontWeight: "500",
+  },
+  demoBtnRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  demoPill: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.cardBorder,
+    ...(Platform.OS === "web" ? ({ cursor: "pointer" } as any) : {}),
+  },
+  demoPillAdmin: {
+    backgroundColor: theme.colors.card,
+  },
+  demoPillActive: {
+    borderColor: theme.colors.primary,
+    backgroundColor: "#EFF6FF",
+  },
+  demoPillActiveAdmin: {
+    borderColor: theme.colors.darkNavy,
+    backgroundColor: "#F1F5F9",
+  },
+  demoPillContent: {
+    flex: 1,
+  },
+  demoPillRole: {
+    fontSize: 11.5,
+    fontWeight: "700",
+    color: theme.colors.primary,
+  },
+  demoPillRoleAdmin: {
+    fontSize: 11.5,
+    fontWeight: "700",
+    color: theme.colors.darkNavy,
+  },
+  demoPillCreds: {
+    fontSize: 10,
+    color: theme.colors.textMuted,
+    marginTop: 1,
   },
 
   // SWITCH
